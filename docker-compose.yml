@@ -1,0 +1,110 @@
+# version: "3.7"
+
+services:
+  redis:
+    container_name: redis
+    hostname: redis
+    build:
+      context: ./app
+      dockerfile: Dockerfile_redis
+    #command: redis-server /data/redis.conf
+    #command: redis-server /data/redis.conf
+    command: >
+      redis-server 
+        --tls-port 6380
+        --port 0
+        --tls-cert-file /data/redis.crt
+        --tls-key-file /data/redis.key
+        --tls-ca-cert-file /data/redis.crt
+        --tls-auth-clients no
+    expose:
+      - 6380
+    ports:
+      - 6380:6380
+    networks:
+      - arealite
+
+  api:
+    container_name: api
+    hostname: api
+    build:
+      context: ./app
+      dockerfile: Dockerfile_api
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
+    environment:
+      - CELERY_BROKER=rediss://host.docker.internal:6380/0
+      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+    depends_on:
+      - redis
+    ports:
+      - 5555:5555
+    networks:
+      - arealite
+
+  flower:
+    container_name: flower
+    hostname: flower
+    image: localhost/flower
+    build:
+      context: ./app
+      dockerfile: Dockerfile_flower
+    #command: celery flower --port=6666 --broker=rediss://host.docker.internal:6380/0
+    environment:
+      - CELERY_BROKER=rediss://host.docker.internal:6380/0
+      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+    command: >
+      celery
+      flower
+      --port=6666
+      --broker=rediss://host.docker.internal:6380/0
+      --broker_use_ssl={"ssl_cert_reqs":"required","ssl_ca_certs":"redis.crt"}
+    ports:
+      - 5556:6666
+    depends_on:
+      # - celery
+      - redis
+    networks:
+      - arealite
+
+
+# WORKERS HERE
+
+  # celery:
+  #   hostname: add
+  #   image: localhost/celery
+  #   build:
+  #     context: ./app
+  #     dockerfile: Dockerfile_celery
+  #   command: celery -A tasks worker -Q add --loglevel=INFO
+  #   environment:
+  #     - CELERY_BROKER=rediss://host.docker.internal:6380/0
+  #     - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - remoteServer
+
+  # celery1:
+  #   hostname: multiple
+  #   image: localhost/celery
+  #   build:
+  #     context: ./app
+  #     dockerfile: Dockerfile_celery
+  #   command: celery -A tasks worker -Q multiply --loglevel=INFO
+  #   environment:
+  #     - CELERY_BROKER=rediss://host.docker.internal:6380/0
+  #     - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - multiple
+
+networks:
+  arealite:
+    driver: bridge
+
+  remoteServer:
+    driver: bridge
+
+  multiple:
+    driver: bridge

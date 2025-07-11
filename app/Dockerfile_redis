@@ -1,0 +1,11 @@
+FROM redis:latest
+
+WORKDIR /data
+
+COPY ./redis/redis.conf /data/redis.conf
+
+COPY ./redis/redis.crt /data/redis.crt
+
+COPY ./redis/redis.key /data/redis.key
+
+CMD ['redis-server', '/data/redis.conf']
