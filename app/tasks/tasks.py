@@ -20,12 +20,12 @@ app.conf.broker_use_ssl = {
 app.conf.redis_backend_use_ssl = app.conf.broker_use_ssl
 
 
-@app.task(name="add", queue="add")
+@app.task(queue="add")
 def add(x, y):
     return x + y
 
 
-@app.task(name="multiple", queue="multiply")
+@app.task(queue="multiply")
 def multiply(x, y):
     return x * y
 
