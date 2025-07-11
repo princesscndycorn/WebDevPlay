@@ -181,3 +181,4 @@ cython_debug/
 .cursorindexingignore
 app/redis/redis.crt
 app/redis/redis.key
+.DS_Store
