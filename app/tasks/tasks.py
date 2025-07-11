@@ -13,9 +13,18 @@ app = Celery(
     include=['tasks']
 )
 
+# app.conf.broker_use_ssl = {
+#     'ssl_cert_reqs': 'required',
+#     'ssl_ca_certs': '/app/redis.crt',
+#     'ssl_certfile': '/app/client.crt',
+#     'ssl_keyfile': '/app/client.key',
+# }
+
 app.conf.broker_use_ssl = {
-    'ssl_cert_reqs': 'required',
-    'ssl_ca_certs': '/app/redis.crt',
+    'ssl_certfile': os.environ.get("REDIS_CLIENT_CERT"),
+    'ssl_keyfile': os.environ.get("REDIS_CLIENT_KEY"),
+    'ssl_ca_certs': os.environ.get("REDIS_CA_CERT"),
+    'ssl_cert_reqs': 'none',
 }
 app.conf.redis_backend_use_ssl = app.conf.broker_use_ssl
 
