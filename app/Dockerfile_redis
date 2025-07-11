@@ -4,4 +4,4 @@ WORKDIR /data
 
 COPY ./redis/ /data/
 
-#CMD ['redis-server', '/data/redis.conf']
+CMD ['redis-server', '/data/redis.conf']
