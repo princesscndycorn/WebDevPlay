@@ -8,12 +8,7 @@ services:
       context: ./app
       dockerfile: Dockerfile_redis
     command: >
-      redis-server 
-        --tls-port 6380
-        --port 0
-        --tls-cert-file /data/redis.crt
-        --tls-key-file /data/redis.key
-        --tls-ca-cert-file /data/redis.crt
+      redis-server redis.conf
     expose:
       - 6380
     ports:
@@ -42,8 +37,6 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_flower
-    env_file:
-      - .env
     command: >
         celery
           flower
@@ -69,8 +62,9 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_celery
-    env_file:
-      - .env
+    environment:
+      - CELERY_BROKER=rediss://host.docker.internal:6380/0
+      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
     command: celery -A tasks worker -Q add --loglevel=INFO
     depends_on:
       - redis
