@@ -182,3 +182,7 @@ cython_debug/
 app/redis/redis.crt
 app/redis/redis.key
 .DS_Store
+app/redis/client.crt
+app/redis/client.csr
+app/redis/client.key
+app/redis/redis.srl
