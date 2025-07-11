@@ -12,6 +12,10 @@ RUN pip install --no-cache-dir -r requirements_api.txt
 
 COPY ./redis/redis.crt .
 
+COPY ./redis/client.crt .
+
+COPY ./redis/client.key .
+
 COPY ./api/main.py .
 
 COPY ./tasks/tasks.py .
