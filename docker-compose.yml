@@ -69,35 +69,21 @@ services:
 
 # WORKERS HERE
 
-  # celery:
-  #   hostname: add
-  #   image: localhost/celery
-  #   build:
-  #     context: ./app
-  #     dockerfile: Dockerfile_celery
-  #   command: celery -A tasks worker -Q add --loglevel=INFO
-  #   environment:
-  #     - CELERY_BROKER=rediss://host.docker.internal:6380/0
-  #     - CELERY_BACKEND=rediss://host.docker.internal:6380/0
-  #   depends_on:
-  #     - redis
-  #   networks:
-  #     - remoteServer
-
-  # celery1:
-  #   hostname: multiple
-  #   image: localhost/celery
-  #   build:
-  #     context: ./app
-  #     dockerfile: Dockerfile_celery
-  #   command: celery -A tasks worker -Q multiply --loglevel=INFO
-  #   environment:
-  #     - CELERY_BROKER=rediss://host.docker.internal:6380/0
-  #     - CELERY_BACKEND=rediss://host.docker.internal:6380/0
-  #   depends_on:
-  #     - redis
-  #   networks:
-  #     - multiple
+  celery:
+    hostname: add
+    image: localhost/celery
+    build:
+      context: ./app
+      dockerfile: Dockerfile_celery
+    command: celery -A tasks worker -Q add --loglevel=INFO
+    environment:
+      - CELERY_BROKER=rediss://host.docker.internal:6380/0
+      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+    depends_on:
+      - redis
+    networks:
+      - remoteServer
+      
 
 networks:
   arealite:
