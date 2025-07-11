@@ -11,9 +11,9 @@ services:
       redis-server 
         --tls-port 6380
         --port 0
-        --tls-cert-file /path
-        --tls-key-file /path
-        --tls-ca-cert-file /path
+        --tls-cert-file /data/redis.crt
+        --tls-key-file /data/redis.key
+        --tls-ca-cert-file /data/redis.crt
     expose:
       - 6380
     ports:
