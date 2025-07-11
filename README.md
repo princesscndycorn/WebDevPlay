@@ -37,7 +37,7 @@ openssl req -new -key client.key -out client.csr \
 Sign the CSR with your CA to produce a client cert
 
 ```
-openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key \
+openssl x509 -req -in client.csr -CA redis.crt -CAkey redis.key \
   -CAcreateserial -out client.crt -days 365 -sha256
 ```
 
