@@ -7,16 +7,7 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_redis
-    #command: redis-server /data/redis.conf
-    #command: redis-server /data/redis.conf
-    command: >
-      redis-server 
-        --tls-port 6380
-        --port 0
-        --tls-cert-file /data/redis.crt
-        --tls-key-file /data/redis.key
-        --tls-ca-cert-file /data/redis.crt
-        --tls-auth-clients no
+    command: redis-server redis.conf
     expose:
       - 6380
     ports:
@@ -24,22 +15,19 @@ services:
     networks:
       - arealite
 
-  api:
-    container_name: api
-    hostname: api
-    build:
-      context: ./app
-      dockerfile: Dockerfile_api
-    command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
-    environment:
-      - CELERY_BROKER=rediss://host.docker.internal:6380/0
-      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
-    depends_on:
-      - redis
-    ports:
-      - 5555:5555
-    networks:
-      - arealite
+#   api:
+#     container_name: api
+#     hostname: api
+#     build:
+#       context: ./app
+#       dockerfile: Dockerfile_api
+#     command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
+#     depends_on:
+#       - redis
+#     ports:
+#       - 5555:5555
+#     networks:
+#       - arealite
 
   flower:
     container_name: flower
@@ -48,16 +36,16 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_flower
-    #command: celery flower --port=6666 --broker=rediss://host.docker.internal:6380/0
-    environment:
-      - CELERY_BROKER=rediss://host.docker.internal:6380/0
-      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+    env_file:
+      - .env
     command: >
-      celery
-      flower
-      --port=6666
-      --broker=rediss://host.docker.internal:6380/0
-      --broker_use_ssl={"ssl_cert_reqs":"required","ssl_ca_certs":"redis.crt"}
+        celery
+          flower
+          --broker=rediss://host.docker.internal:6380/0
+          --broker_use_ssl=true
+          --certfile=/app/client.crt
+          --keyfile=/app/client.key
+          --ca_certs=/app/ca.crt
     ports:
       - 5556:6666
     depends_on:
@@ -67,7 +55,7 @@ services:
       - arealite
 
 
-# WORKERS HERE
+# # WORKERS HERE
 
   celery:
     hostname: add
@@ -75,15 +63,14 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_celery
+    env_file:
+      - .env
     command: celery -A tasks worker -Q add --loglevel=INFO
-    environment:
-      - CELERY_BROKER=rediss://host.docker.internal:6380/0
-      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
     depends_on:
       - redis
     networks:
       - remoteServer
-      
+
 
 networks:
   arealite:
