@@ -7,7 +7,13 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_redis
-    command: redis-server redis.conf
+    command: >
+      redis-server 
+        --tls-port 6380
+        --port 0
+        --tls-cert-file /path
+        --tls-key-file /path
+        --tls-ca-cert-file /path
     expose:
       - 6380
     ports:
