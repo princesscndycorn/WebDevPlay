@@ -40,3 +40,4 @@ Sign the CSR with your CA to produce a client cert
 openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key \
   -CAcreateserial -out client.crt -days 365 -sha256
 ```
+
