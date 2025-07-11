@@ -10,6 +10,10 @@ COPY requirements_flower.txt .
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_flower.txt
 
-COPY ./redis/redis.crt .
+COPY ./redis/rca.crt .
+
+COPY ./redis/client.crt .
+
+COPY ./redis/client.key .
 
 # COPY ./tasks/tasks.py .
