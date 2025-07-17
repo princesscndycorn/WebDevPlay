@@ -10,10 +10,6 @@ COPY requirements_celery.txt .
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_celery.txt
 
-COPY ./redis/redis.crt .
-
-COPY ./redis/client.crt .
-
-COPY ./redis/client.key .
+COPY ./certs/ .
 
 COPY ./tasks/tasks.py .

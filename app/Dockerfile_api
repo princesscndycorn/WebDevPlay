@@ -10,11 +10,7 @@ COPY requirements_api.txt .
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_api.txt
 
-COPY ./redis/redis.crt .
-
-COPY ./redis/client.crt .
-
-COPY ./redis/client.key .
+COPY ./certs/ .
 
 COPY ./api/main.py .
 

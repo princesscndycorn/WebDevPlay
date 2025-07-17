@@ -194,3 +194,12 @@ app/redis/redis.csr
 app/.DS_Store
 app/certs/myCA.key
 app/.DS_Store
+app/certs/ca.crt
+app/certs/ca.key
+app/certs/ca.srl
+app/certs/client.crt
+app/certs/client.csr
+app/certs/client.key
+app/certs/redis.crt
+app/certs/redis.csr
+app/certs/redis.key

@@ -16,19 +16,21 @@ services:
     networks:
       - arealite
 
-#   api:
-#     container_name: api
-#     hostname: api
-#     build:
-#       context: ./app
-#       dockerfile: Dockerfile_api
-#     command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
-#     depends_on:
-#       - redis
-#     ports:
-#       - 5555:5555
-#     networks:
-#       - arealite
+  api:
+    container_name: api
+    hostname: api
+    build:
+      context: ./app
+      dockerfile: Dockerfile_api
+    env_file:
+      - .env
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
+    depends_on:
+      - redis
+    ports:
+      - 5555:5555
+    networks:
+      - arealite
 
   flower:
     container_name: flower
@@ -37,19 +39,17 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_flower
+    env_file:
+      - .env
     command: >
         celery
           flower
-          --broker=rediss://host.docker.internal:6380/0
-          --broker_use_ssl=true
+          --broker=$${BROKER_URL}
           --certfile=/app/client.crt
           --keyfile=/app/client.key
           --ca_certs=/app/ca.crt
     ports:
       - 5556:6666
-    depends_on:
-      # - celery
-      - redis
     networks:
       - arealite
 
@@ -62,12 +62,14 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_celery
+    env_file:
+      - .env
     environment:
-      - CELERY_BROKER=rediss://host.docker.internal:6380/0
-      - CELERY_BACKEND=rediss://host.docker.internal:6380/0
+      # - CELERY_BROKER=rediss://host.docker.internal:6380/0?ssl_cert_reqs=required
+      # - CELERY_BACKEND=rediss://host.docker.internal:6380/0?ssl_cert_reqs=required
+      - CELERY_BROKER=$${BROKER_URL}
+      - CELERY_BACKEND=$${BROKER_URL}
     command: celery -A tasks worker -Q add --loglevel=INFO
-    depends_on:
-      - redis
     networks:
       - remoteServer
 

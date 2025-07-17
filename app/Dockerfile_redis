@@ -2,6 +2,8 @@ FROM redis:latest
 
 WORKDIR /data
 
-COPY ./redis/ /data/
+COPY ./redis/redis.conf /data/redis.conf
+
+COPY ./certs/ /data/
 
 CMD ['redis-server', '/data/redis.conf']

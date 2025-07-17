@@ -8,8 +8,8 @@ logger = get_task_logger(__name__)
 
 app = Celery(
     __name__,
-    broker=os.environ.get("CELERY_BROKER"),
-    backend=os.environ.get("CELERY_BACKEND"),
+    broker=os.environ.get("BROKER_URL"),
+    backend=os.environ.get("BROKER_URL"),
     include=['tasks']
 )
 
