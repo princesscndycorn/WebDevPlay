@@ -42,12 +42,11 @@ services:
     env_file:
       - .env
     command: >
-        celery
-          flower
-          --broker=$${BROKER_URL}
-          --certfile=/app/client.crt
-          --keyfile=/app/client.key
-          --ca_certs=/app/ca.crt
+      celery
+      flower
+      --port=6666
+      --broker=$${BROKER_URL}
+      --broker_use_ssl={"ssl_cert_reqs":"required","ssl_ca_certs":"redis.crt"}
     ports:
       - 5556:6666
     networks:
