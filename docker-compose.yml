@@ -10,9 +10,7 @@ services:
     command: >
       redis-server redis.conf
     expose:
-      - 6380
-    ports:
-      - 6380:6380
+      - 6379
     networks:
       - arealite
 
@@ -22,6 +20,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_api
+      secrets:
+        - pypi_token
     env_file:
       - .env
     command: uvicorn main:app --reload --host 0.0.0.0 --port 5555
@@ -68,10 +68,13 @@ services:
       # - CELERY_BACKEND=rediss://host.docker.internal:6380/0?ssl_cert_reqs=required
       - CELERY_BROKER=$${BROKER_URL}
       - CELERY_BACKEND=$${BROKER_URL}
-    command: celery -A tasks worker -Q add --loglevel=INFO
+    command: celery -A celery_app worker --loglevel=INFO
     networks:
-      - remoteServer
+      - arealite
 
+secrets:
+  pypi_token:
+    file: ./token.txt
 
 networks:
   arealite:

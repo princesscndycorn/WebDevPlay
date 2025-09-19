@@ -1,0 +1,36 @@
+# version: "3.7"
+
+services:
+  worker1:
+    hostname: worker1
+    image: localhost/celery
+    build:
+      context: ./app
+      dockerfile: Dockerfile_celery
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER=$${BROKER_URL}
+      - CELERY_BACKEND=$${BROKER_URL}
+    command: celery -A celery_app worker --loglevel=INFO
+    networks:
+      - arealite
+
+  worker2:
+    hostname: worker2
+    image: localhost/celery
+    build:
+      context: ./app
+      dockerfile: Dockerfile_celery
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER=$${BROKER_URL}
+      - CELERY_BACKEND=$${BROKER_URL}
+    command: celery -A celery_app worker --loglevel=INFO
+    networks:
+      - arealite
+
+networks:
+  arealite:
+    driver: bridge

@@ -2,3 +2,4 @@ fastapi
 celery
 uvicorn
 redis
+ipython

@@ -203,3 +203,4 @@ app/certs/client.key
 app/certs/redis.crt
 app/certs/redis.csr
 app/certs/redis.key
+token.txt

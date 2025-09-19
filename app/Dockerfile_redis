@@ -4,6 +4,6 @@ WORKDIR /data
 
 COPY ./redis/redis.conf /data/redis.conf
 
-COPY ./certs/ /data/
+# COPY ./certs/ /data/
 
 CMD ['redis-server', '/data/redis.conf']

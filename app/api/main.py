@@ -1,14 +1,14 @@
 from fastapi import FastAPI
-from tasks import add, multiply
+from routers import bluey, bingo, scoobydoo
 
-app = FastAPI()
+app = FastAPI(tags=["main"])
 
-@app.post("/add")
-def queue_add(x: int, y: int):
-    task = add.delay(x, y)
-    return {"task_id": task.id}
+# Include routers
+app.include_router(bluey.router)
+app.include_router(bingo.router)
+app.include_router(scoobydoo.router)
 
-@app.post("/multiply")
-def queue_add(x: int, y: int):
-    task = multiply.delay(x, y)
-    return {"task_id": task.id}
+
+@app.get("/hello")
+def hello():
+    return {"message": "Hellow World?"}

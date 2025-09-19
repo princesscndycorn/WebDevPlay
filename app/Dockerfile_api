@@ -7,11 +7,34 @@ WORKDIR /app
 # Copy the requirements file into the container at /app
 COPY requirements_api.txt .
 
+# Copy your application binary or scripts
+RUN --mount=type=secret,id=pypi_token \
+	TOKEN=$(cat /run/secrets/pypi_token) && \
+ 	pip install --no-cache-dir -r requirements_api.txt; echo $TOKEN
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements_api.txt
 
 COPY ./certs/ .
 
-COPY ./api/main.py .
+COPY ./api/ . 
 
-COPY ./tasks/tasks.py .
+COPY tasks/ ./tasks/
+
+# RUN chmod -R +x /app
+
+# Create a non-root user with no login shell
+# RUN useradd -r -s /usr/sbin/nologin appuser
+
+# Optional: Remove shell binaries for extra hardening
+# RUN rm -f /bin/sh /bin/bash /usr/bin/bash || true
+
+# Copy the requirements file into the container at /app
+# COPY requirements_api.txt .
+
+# Switch to non-root user
+# USER appuser
+
+# ENTRYPOINT ["/usr/local/bin/uvicorn"]
+
+# CMD ["main:app", "--host", "0.0.0.0", "--port", "5555"]
